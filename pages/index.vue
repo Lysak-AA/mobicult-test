@@ -1,9 +1,14 @@
 <template>
     <section id="cards-page">
-        <div class="cards-list" v-if="savedCards?.length">
-
+        <div class="settings-page__card-list" v-if="Object.keys(cardsList).length">
+            <AppCard
+                v-for="item in cardsList"
+                key="item.id"
+                :card="item"
+                :editable="false"
+            />
         </div>
-        <div class="no-cards-message">
+        <div class="no-cards-message" v-else>
             <p>Вы не добавили карточки :(</p>
             <p>Перейдите в <NuxtLink to="/admin">НАСТРОЙКИ</NuxtLink> и заполните форму</p>
         </div>
@@ -11,15 +16,23 @@
 </template>
 
 <script setup lang="ts">
-// import { reactive } from 'vue';
-// import type { Card } from '@/types/types'
+import type { Card } from '~/types/types'
+import AppCard from '~/components/AppCard.vue';
+import { ref } from 'vue';
+import { useUpdateCardsList } from '~/composables/useUpdateCardsList';
 
 definePageMeta({
   layout: 'default'
 })
 
-// const cards: Array<Card> = reactive([])
+let cardsList: Ref<Array<Card>> | [] = ref([])
 
-const savedCards = localStorage.getItem('mob-cards')
+cardsList.value = useUpdateCardsList()
+
+window.addEventListener('storage', function(event) {
+    if (event.key === 'mob-cards') {
+        cardsList.value = useUpdateCardsList()
+    }
+});
 
 </script>

@@ -52,10 +52,24 @@ nav a {
     justify-content: center;
     align-items: flex-start;
     padding-block: 40px 0;
+
+    .no-cards-message {
+        text-align: center;
+        p:not(:last-of-type) {
+            margin-bottom: 20px;
+        }
+    }
+
+    .settings-page__card-list {
+        .app-card {
+            justify-content: center;
+        }
+    }
 }
 
 #main-form {
     width: 100%;
+    max-width: 500px;
     height: fit-content;
     display: flex;
     flex-direction: column;
@@ -250,13 +264,14 @@ nav a {
 
 .settings-page__card-list {
     width: 100%;
+    max-width: 1024px;
+    margin-inline: auto;
     height: fit-content;
-    padding-block: 30px 40px;
+    padding-block: 30px 90px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
     flex-wrap: wrap;
-    overflow: scroll;
     gap: 20px;
 }
 
@@ -294,5 +309,29 @@ nav a {
         justify-self: start;
         border-radius: 10px;
         padding: 5px;
+    }
+}
+
+.add-cards-message {
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%, 0);
+    bottom: 200px;
+    text-align: center;
+    p {
+        margin-bottom: 20px;
+    }
+    svg {
+        transform: scale(2) translateY(0);
+        animation: arrow-animation 1s ease infinite;
+    }
+}
+
+@keyframes arrow-animation {
+    from {
+        transform: scale(2) translateY(0);
+    }
+    to {
+        transform: scale(2) translateY(20px);
     }
 }

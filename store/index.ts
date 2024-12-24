@@ -15,7 +15,6 @@ export const useAlertsStore = defineStore('alerts', {
             this.status = status
         },
         closeAlert() {
-            console.log('close alert')
             this.showAlert = false
         }
     }

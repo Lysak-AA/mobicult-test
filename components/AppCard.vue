@@ -28,7 +28,7 @@ import AppSaveIcon from './icons/AppSaveIcon.vue';
 defineProps<{
     card: Card
     editable: boolean
-    editMode: boolean
+    editMode?: boolean
 }>()
 
 const model = defineModel<string>()
