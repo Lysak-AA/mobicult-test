@@ -1,0 +1,44 @@
+@import './fonts.scss';
+@import './components/app-popup.scss';
+@import './components/app-form.scss';
+
+
+* {
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow: hidden;
+    background: #FCFCFD;
+    font-family: 'Roboto Regular';
+}
+
+header {
+    width: 100%;
+    height: 100px;
+    background-color: #7c75c5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    text-transform: uppercase;
+    display: block;
+    padding: 5px 10px;
+    border: 1px solid white;
+    border-radius: 3px;
+}
+
+#cards-page {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-block: 40px 0;
+}
+
+
