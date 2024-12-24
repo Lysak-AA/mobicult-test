@@ -5,5 +5,6 @@ export default defineNuxtConfig({
     // prerender index route by default
     '/': { prerender: true },
   },
-  css: ['~/assets/styles/index.scss']
+  css: ['~/assets/styles/index.scss'],
+  ssr: false
 });
