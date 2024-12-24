@@ -6,5 +6,11 @@ export default defineNuxtConfig({
     '/': { prerender: true },
   },
   css: ['~/assets/styles/index.scss'],
-  ssr: false
+  ssr: false,
+  modules: [
+    '@pinia/nuxt'
+  ],
+  vue: {
+    
+  }
 });

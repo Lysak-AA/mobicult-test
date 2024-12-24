@@ -7,12 +7,14 @@
         </NuxtLink>
       </nav>
     </header>
+    <AppAlert />
     <NuxtPage />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { Route } from '@/types/types'
+import AppAlert from './components/AppAlert.vue';
 const route = useRoute()
 
 const pathes: Array<Route> = [

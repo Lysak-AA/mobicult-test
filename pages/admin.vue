@@ -8,7 +8,7 @@
                 submit-btn-value="Добавить"
                 @submit="addCard"
             >
-            <TextareaInput
+            <AppTextareaInput
                 id="card-textarea-input"
                 label="Текст карточки"
                 placeholder="Введите текст карточки"
@@ -18,48 +18,148 @@
             />
             </AppForm>
         </AppPopup>
+        <div class="settings-page__card-list" v-if="Object.keys(cardsList).length">
+            <AppCard
+                v-for="item in cardsList"
+                key="item.id"
+                :card="item"
+                :editable="true"
+                :edit-mode="cardEditingId === item.id"
+                @delete="deleteCard($event)"
+                @edit="cardEditingId = $event"
+                @save="saveNewText($event)"
+            />
+        </div>
+        <AppButton
+            title="Добавить карточку"
+            icon
+            size="big"
+            rounded
+            additional-classes="add-card-btn"
+            @click="popup.openPopup"
+        >
+        <AppPlusIcon />
+        </AppButton>
     </section>
 </template>
 
 <script setup lang="ts">
 import AppPopup from '~/components/AppPopup.vue';
 import AppForm from '~/components/AppForm.vue';
-import TextareaInput from '~/components/TextareaInput.vue';
-import { computed, ref } from 'vue';
+import AppTextareaInput from '~/components/AppTextareaInput.vue';
+import AppButton from '~/components/AppButton.vue';
+import AppPlusIcon from '~/components/icons/AppPlusIcon.vue';
+import AppCard from '~/components/AppCard.vue';
+import { computed, ref, onMounted } from 'vue';
+import { useAlertsStore, usePopupStore } from '~/store';
+import type { Card, CardObject } from '~/types/types'
+
+const alertStore = useAlertsStore()
+const popup = usePopupStore()
+
+let cardsList: Ref<Array<Card>> | [] = ref([])
 
 const cardText: Ref<string> = ref('')
 
+const cardEditingId: Ref<number | null> = ref(null)
+
 const isCardTextValid = computed(() => cardText.value.length > 10 && cardText.value.length < 30)
 
+const updateCardsList = () => {
+    const newCardList = localStorage.getItem('mob-cards')
+    if (!newCardList) {
+        cardsList.value = []
+    } else {
+        const object = JSON.parse(newCardList)
+        const arrFromObj: Ref<Array<Card>> | [] = []
+        for (let item in object) {
+            arrFromObj.push(object[item] as never)
+        }
+        cardsList.value = arrFromObj
+    }
+}
+
+const saveNewText = (e) => {
+    try {
+        if (e.text.length < 10 || e.text.length > 30) {
+            throw Error('Текст должен быть длиннее 10 и короче 30 символов')
+        }
+        const currentCards = localStorage.getItem('mob-cards')
+        if (!currentCards) {
+            throw Error()
+        } else {
+            const object = JSON.parse(currentCards)
+            object[e.id].text = e.text
+            localStorage.setItem('mob-cards', JSON.stringify(object))
+            updateCardsList()
+            alertStore.openAlert('Карточка успешно обновлена', 'success')
+            cardEditingId.value = null
+        }
+    } catch (err) {
+        console.warn('Ошибка: ' + err)
+        alertStore.openAlert(err as string, 'error')
+    } finally {
+        setTimeout(() => {
+            alertStore.closeAlert()
+        }, 2000)
+    }
+}
+
+const deleteCard = (id: number) => {
+    try {
+        let currentCards = localStorage.getItem('mob-cards')
+        if (!currentCards) {
+            throw Error()
+        }
+        const object = JSON.parse(currentCards)
+        delete object[id]
+        localStorage.setItem('mob-cards', JSON.stringify(object))
+        updateCardsList()
+        alertStore.openAlert('Карточка успешно удалена', 'success')
+    } catch (err) {
+        console.warn('Ошибка: ' + err)
+        alertStore.openAlert('Что-то пошло не так...', 'error')
+    } finally {
+        setTimeout(() => {
+            alertStore.closeAlert()
+        }, 2000)
+    }
+
+}
 
 const addCard = (e: Event) => {
     try {
-        console.log('adding card')
-
+        const id = Date.now()
         let currentCards = localStorage.getItem('mob-cards')
         if (!currentCards) {
             localStorage.setItem('mob-cards', JSON.stringify({
-                '1': {
-                    id: 1,
+                [id]: {
+                    id: id,
                     text: cardText.value
                 }
             }))
             cardText.value = ''
         } else {
-            console.log('there are at least one card')
-            const lastIndex = Object.keys(JSON.parse(currentCards)).length
             const cardsToUpdate = JSON.parse(currentCards)
-            console.log(lastIndex)
-            cardsToUpdate[lastIndex + 1] = {
-                id: lastIndex + 1,
+            cardsToUpdate[id] = {
+                id: id,
                 text: cardText.value
             }
             localStorage.setItem('mob-cards', JSON.stringify(cardsToUpdate))
             cardText.value = ''
         }
+        alertStore.openAlert('Карточка успешно создана', 'success')
+        updateCardsList()
     } catch (err) {
         console.warn('Ошибка: ' + err)
+        alertStore.openAlert('Что-то пошло не так...', 'error')
+    } finally {
+        setTimeout(() => {
+            alertStore.closeAlert()
+        }, 2000)
     }
 }
+
+updateCardsList()
 
 </script>

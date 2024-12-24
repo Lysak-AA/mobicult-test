@@ -23,10 +23,10 @@ defineEmits(['blur', 'input'])
 
 defineProps<{
     id: string
-    label: string
+    label?: string
     placeholder: string
-    errorMessage: string
-    isValid: boolean
+    errorMessage?: string
+    isValid?: boolean
 }>()
 
 const model = defineModel<string>()
